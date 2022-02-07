@@ -17,7 +17,7 @@
     <body>
             <form method="POST">
                 @csrf
-                <input type="url" name="url" placeholder="Enter URL"/>
+                <input type="url" name="url" placeholder="Enter URL" value="https://agencyanalytics.com/"/>
                 <input type="number" name="maxPages" min="1" max="10" value="6"/>
                 <button type="submit">Crawl</button>
             </form>
