@@ -3,17 +3,7 @@
 namespace Tests\Unit;
 
 use AgencyAnalytics\Crawler\Crawler;
-use AgencyAnalytics\Crawler\PageScraper;
-use AgencyAnalytics\LinkFilter\ExternalLinkFilter;
-use AgencyAnalytics\LinkFilter\InternalLinkFilter;
-use AgencyAnalytics\LinkFilter\LinkFilter;
-use AgencyAnalytics\LinksParser\ImageLinksParser;
-use AgencyAnalytics\LinksParser\LinksParser;
-use AgencyAnalytics\LinksParser\LinksParserManager;
-use AgencyAnalytics\PageStats\Counter\PageLoadCounter;
-use AgencyAnalytics\PageStats\Counter\TitleLength;
-use AgencyAnalytics\PageStats\Counter\WordsCounter;
-use AgencyAnalytics\PageStats\PageStats;
+use AgencyAnalytics\Crawler\PageScraperFactory;
 use AgencyAnalytics\Report\CrawledPagesReport;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
@@ -70,7 +60,7 @@ class CrawlerTest extends TestCase
 
     public function test_PageScraper()
     {
-        $pageScraper = $this->getPageScraper($this->entryPointUrl);
+        $pageScraper = PageScraperFactory::create($this->getHttpClient());
         $response = $pageScraper->scrape($this->entryPointUrl)->wait();
 
         $this->assertTrue(count($response['links']['image']) === 2);
@@ -83,7 +73,7 @@ class CrawlerTest extends TestCase
 
     public function test_Crawler()
     {
-        $crawler = new Crawler($this->getHttpClient());
+        $crawler = new Crawler(PageScraperFactory::create($this->getHttpClient()));
         $response = $crawler->crawl($this->entryPointUrl, $this->maxPages);
 
         $this->assertTrue(isset($response['http://test.com/']));
@@ -113,7 +103,7 @@ class CrawlerTest extends TestCase
 
     public function test_CrawlerPagesReport()
     {
-        $crawler = new Crawler($this->getHttpClient());
+        $crawler = new Crawler(PageScraperFactory::create($this->getHttpClient()));
         $response = $crawler->crawl($this->entryPointUrl, $this->maxPages);
 
         $report = (new CrawledPagesReport())->getReport($response);
@@ -148,22 +138,5 @@ class CrawlerTest extends TestCase
         $client = new Client(['handler' => $handlerStack]);
 
         return $client;
-    }
-
-    private function getPageScraper(string $url): PageScraper
-    {
-        $linksParserManager = new LinksParserManager();
-        $linksParserManager->addLinksParser('image', new ImageLinksParser(new LinkFilter($url)));
-        $linksParserManager->addLinksParser('internal', new LinksParser(new InternalLinkFilter($url)));
-        $linksParserManager->addLinksParser('external', new LinksParser(new ExternalLinkFilter($url)));
-
-        $pageStats = new PageStats();
-        $pageStats->addCounter('page-load', new PageLoadCounter());
-        $pageStats->addCounter('words', new WordsCounter());
-        $pageStats->addCounter('title-length', new TitleLength());
-
-        $pageScraper = new PageScraper($this->getHttpClient(), $linksParserManager, $pageStats);
-
-        return $pageScraper;
     }
 }

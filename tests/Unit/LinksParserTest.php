@@ -23,7 +23,8 @@ class LinksParserTest extends TestCase
 
     public function test_InternalLinksParser()
     {
-        $linksParser = new LinksParser(new InternalLinkFilter('http://test.com'));
+        $linksParser = new LinksParser(new InternalLinkFilter());
+        $linksParser->setBaseUrl('http://test.com');
         $links = $linksParser->parse($this->contents);
 
         $this->assertTrue(count($links) === 3);
@@ -34,7 +35,8 @@ class LinksParserTest extends TestCase
 
     public function test_ExternalLinksParser()
     {
-        $linksParser = new LinksParser(new ExternalLinkFilter('http://test.com'));
+        $linksParser = new LinksParser(new ExternalLinkFilter());
+        $linksParser->setBaseUrl('http://test.com');
         $links = $linksParser->parse($this->contents);
 
         $this->assertTrue(count($links) === 2);
@@ -44,7 +46,8 @@ class LinksParserTest extends TestCase
 
     public function test_LinksParser()
     {
-        $linksParser = new LinksParser(new LinkFilter('http://test.com'));
+        $linksParser = new LinksParser(new LinkFilter());
+        $linksParser->setBaseUrl('http://test.com');
         $links = $linksParser->parse($this->contents);
 
         $this->assertTrue(count($links) === 5);
@@ -52,7 +55,8 @@ class LinksParserTest extends TestCase
 
     public function test_ImageLinksParser()
     {
-        $linksParser = new ImageLinksParser(new LinkFilter('http://test.com'));
+        $linksParser = new ImageLinksParser(new LinkFilter());
+        $linksParser->setBaseUrl('http://test.com');
         $links = $linksParser->parse($this->contents);
 
         $this->assertTrue(count($links) === 2);

@@ -6,11 +6,26 @@ namespace AgencyAnalytics\LinksParser;
 
 class LinksParserManager implements LinksParserInterface
 {
-    protected $parsers;
+    private $parsers;
+    private $baseUrl;
+
 
     public function __construct()
     {
         $this->parsers = [];
+        $this->baseUrl = '';
+    }
+
+    /**
+     * Sets base URL to all parsers.
+     */
+    public function setBaseUrl(string $baseUrl): void
+    {
+        $this->baseUrl = $baseUrl;
+
+        foreach ($this->parsers as &$parser) {
+            $parser->setBaseUrl($baseUrl);
+        }
     }
 
     /**
@@ -18,6 +33,8 @@ class LinksParserManager implements LinksParserInterface
      */
     public function addLinksParser(string $name, LinksParserInterface $linksParser): void
     {
+        $linksParser->setBaseUrl($this->baseUrl);
+        
         $this->parsers[$name] = $linksParser;
     }
 

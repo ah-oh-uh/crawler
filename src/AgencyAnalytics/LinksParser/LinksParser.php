@@ -16,6 +16,14 @@ class LinksParser implements LinksParserInterface
     }
 
     /**
+     * Sets base URL that is used to rebuild relative links.
+     */
+    public function setBaseUrl(string $baseUrl): void
+    {
+        $this->linkFilter->setBaseUrl($baseUrl);
+    }
+
+    /**
      * Returns array of links parsed from a given contents.
      */
     public function parse(string $contents): array

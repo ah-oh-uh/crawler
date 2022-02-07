@@ -35,6 +35,9 @@ class PageScraper
     public function scrape(string $url): PromiseInterface
     {
         $url = (new LinkFilter($url))->filter($url);
+        
+        $this->linksParserManager->setBaseUrl($url);
+
         $startTime = time();
 
         $httpRequest = new Request('GET', $url);

@@ -8,21 +8,18 @@ class LinkFilter implements LinkFilterInterface
 {
     protected $baseUrlParts;
 
-    public function __construct(string $baseUrl)
+    public function __construct()
     {
-        $this->baseUrlParts = parse_url($baseUrl);
+        $this->initBaseUrlParts();
+    }
 
-        if (empty($this->baseUrlParts['scheme'])) {
-            $this->baseUrlParts['scheme'] = 'http';
-        }
-
-        if (empty($this->baseUrlParts['host'])) {
-            $this->baseUrlParts['host'] = '';
-        }
-
-        if (empty($this->baseUrlParts['path'])) {
-            $this->baseUrlParts['path'] = '';
-        }
+    /**
+     * Sets base URL that is used to rebuild relative links.
+     */
+    public function setBaseUrl(string $baseUrl): void
+    {
+        $this->initBaseUrlParts();
+        $this->baseUrlParts = array_merge($this->baseUrlParts, parse_url($baseUrl));
     }
 
     /**
@@ -72,5 +69,17 @@ class LinkFilter implements LinkFilterInterface
     protected function canAccept(array $urlParts): bool
     {
         return true;
+    }
+
+    /**
+     * Sets Base URL to blanks.
+     */
+    private function initBaseUrlParts(): void
+    {
+        $this->baseUrlParts = [
+            'scheme' => '',
+            'host' => '',
+            'path' => '',
+        ];
     }
 }
