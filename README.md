@@ -22,7 +22,8 @@ Using PHP, build a web crawler to display information about a given website.
 
 # What we're looking for
 1. High quality and polished code
-2. Attention to architecture and organization 3. Accuracy of the crawled information
+2. Attention to architecture and organization
+3. 3. Accuracy of the crawled information
 
 ## Code
 
